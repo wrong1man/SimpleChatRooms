@@ -126,7 +126,6 @@ function loadPreviousMessages() {
         .then(messages => {
             // Handle the response
             // Update `earliestMessageTimestamp` if necessary
-            {#console.log(messages, messages == [])#}
             if (messages.length ==0){
                 alert("No previous messages found.")
             }

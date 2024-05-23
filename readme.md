@@ -1,37 +1,61 @@
-#Welcome to Simple Chat.
-This project shows how to use websockets to allow authenticated users to send messages to each other.
+# Welcome to Simple Chat  
+  
+Simple Chat is a project that demonstrates the use of websockets to create real-time communication between authenticated users.  
+  
+## Setup  
+  
+To get started, follow the steps below:  
+  
+1. Create a virtual environment.  
+2. Install the project dependencies with `pip install -r requirements.txt`.  
+  
+## Running the Server  
+  
+To run the server, use the following command:   
+  
+```bash  
+uvicorn SimpleChatRooms.asgi:application  
+```
+After running the server, you can register and log in to the application.
 
-To setup, create a virtual envirenment and run:
-`pip install -r requiremenmts.txt`
+## Features
 
-To run the server use:
-`uvicorn SimpleChatRooms.asgi:application`
-You can then login and register.
+From the profile page, you can initiate chats with any existing user or continue a previous chat. Note that you can only have one chat per user. If you attempt to start a new chat with the same user, the existing chat will be opened.
 
-from the `profile` page you can start chats with any existing user, or pickup and old chat. You can only have one chat for each user; Attempting to start a new chat with the same user will open the old chat.
+Redis is used to store the last 100 messages. Due to the potential for high memory usage and data loss with Redis, Celery tasks have been implemented with RabbitMQ to run separately and asynchronously from the websockets and the regular backend. These tasks add messages to the database, allowing for message retrieval in case Redis fails or when you want to access more than the last 100 messages.
 
-Redis will hold the last 100 messages sent as it can become very memory heavy, and there's a risk of data loss.
-Because of this, i've added some celery tasks with rabitmqq that will run seperately and async from the websockets and the regular backend.
-This celery task adds messages to the database, allowing for retrieval if the redis fails or you want more than the last 100 messages.
-I believe this is the proper way to execute the task.
-The celery task server does not need to be running for the project to run. you can run it with:
-`celery -A SimpleChatRooms worker -P threads --concurrency=1 --loglevel=info`
-If you elect to go with the postgresql route you can increase concurrency.
+To run the Celery task server, use the following command:
+```bash  
+celery -A SimpleChatRooms worker -P threads --concurrency=1 --loglevel=info  
+ ```
+Note: The Celery task server is not required for the project to run.
 
-##Database
-SQL Database. sqlite used during development; postgresql used with docker/live deployment.
+If you're using PostgreSQL, you can increase concurrency.
 
-You can check the deployment of this project (deployed on a Azure VM) at: http://***
+It is possible to store more messages with Redis with some simple edits.
 
-For the front-end some corners were cut.
+### Logging
+Loging is done on a database level. It is simpler and allows for easy access and filtering.
+`Generic_Activity_Log` holds activity logs for logged in users (log in, open chat, send message, etc).
+`Generic_Error_Log` holds logs for unexpected errors in execution.
 
-##Frontend:
-External libraries used:
-select2 - better selections.
-bootstrap - simplify css to beautify frontend a little.
-Jquery - simplify some code.
-
-Design:
-Login/register/profile: https://codepen.io/scanfcode/pen/jGeezR
-Chat: https://bbbootstrap.com/snippets/simple-chat-application-57631463
-
+## Database  
+  
+SQLite was used during development, whereas PostgreSQL is used with Docker for live deployment.  
+  
+## Deployment  
+  
+You can check out the live deployment of this project on an Azure VM at: [http://***](http://***)  
+  
+## Frontend  
+  
+Several external libraries were used for the frontend:  
+  
+- Select2 for enhanced selections.  
+- Bootstrap for simplified and attractive frontend styling.  
+- jQuery to simplify the code.  
+  
+Design references for the login, register, profile, and chat pages are as follows:  
+  
+- Login/Register/Profile: [CodePen Link](https://codepen.io/scanfcode/pen/jGeezR)  
+- Chat: [BBBootstrap Link](https://bbbootstrap.com/snippets/simple-chat-application-57631463)  
