@@ -97,10 +97,12 @@ function update_chat(data, prepend) {
 
 
 let socket;
+// const SITE_LINK = "127.0.0.1:8000"
+const SITE_LINK = "sograpp.com"
 $(document).ready(() => {
     scroll_to_end();
 
-    socket = new WebSocket(`ws://127.0.0.1:8000/ws/userchat/${window.conversationId}/`);
+    socket = new WebSocket(`ws://${SITE_LINK}/ws/userchat/${window.conversationId}/`);
     socket.onmessage = (e) => {
         update_chat(JSON.parse(e.data));
     };
