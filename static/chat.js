@@ -71,6 +71,11 @@ function prepend_message(text, isResponse){
 }
 
 function update_chat(data, prepend) {
+    if (data.hasOwnProperty("error")){
+        alert(data.error);
+        return
+    }
+
     const sender = data.sender;
     const msg = data.message;
 
