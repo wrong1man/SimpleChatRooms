@@ -136,3 +136,6 @@ button[disabled]{
   cursor: not-allowed!important;
   pointer-events: all!important;
 }
+.select2 {
+width:100%!important;
+}

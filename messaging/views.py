@@ -9,6 +9,7 @@ from .models import Conversation, Message, Generic_Activity_Log, Generic_Error_L
 from django.http import HttpResponse
 import json
 import traceback
+from celery.execute import send_task
 def index(request):
     """
     Redirects to the profile page if the user is authenticated, otherwise redirects to the login page.
@@ -82,6 +83,12 @@ def profile(request):
     all_users=User.objects.all().exclude(id=request.user.id)
     mychats=Conversation.objects.filter(participants=request.user)
     return render(request, "profile.html", {"all_users":all_users, "mychats":mychats})
+
+
+# from celery import current_app
+# from .tasks import log_activity
+
+
 @login_required
 def get_start_Chat(request):
     """
@@ -108,6 +115,9 @@ def get_start_Chat(request):
             convo.participants.add(participant1)
             convo.participants.add(participant2)
             convo.save()
+            send_task('tasks.log_activity', args=(participant1.id, f"Open Chat. id# {convo.id}", timezone.now()))
+        # current_app.send_task('messaging.tasks.log_activity',
+        #                       (participant1.id, f"Open Chat. id# {convo.id}", timezone.now()))
 
         Generic_Activity_Log.objects.create(user=participant1, type=2, content=f"Open Chat. id# {convo.id}",timestamp=timezone.now())
         return render(request, "chat.html", {"conversation": convo})

@@ -27,11 +27,11 @@
                     </select>
                   <button class="btn btn-success mt-2" onclick="start_chat()" id="start_chat_but" disabled>Start chat</button>
             </div>
-              <div class="col-sm-8">
+              <div class="col-sm-8 col-sm-8 border-start h-100">
                 <h3>Open chat</h3>
-                  <div class="chatlist_container d-flex flex-wrap">
+                  <div class="chatlist_container d-flex flex-wrap chatlist_container d-flex flex-wrap p-3 rounded h-100" style="background-color: aliceblue">
                     {% for chat in mychats %}
-                      <div class="single-chat badge bg-primary mx-1">#{{ chat.id }} {% for p in chat.get_title %}{% if p.id !=  request.user.id %}{{ p }}{% endif %}{% endfor %} <button class="btn btn-sm btn-secondary" onclick="open_chat('{{ chat.id }}')"><img src="/static/envo_open.svg" width="20" alt="openchat"> </button> </div>
+                      <div class="single-chat badge bg-primary mx-1" style="height: fit-content">#{{ chat.id }} {% for p in chat.get_title %}{% if p.id !=  request.user.id %}{{ p }}{% endif %}{% endfor %} <button class="btn btn-sm btn-secondary" onclick="open_chat('{{ chat.id }}')"><img src="/static/envo_open.svg" width="20" alt="openchat"> </button> </div>
                     {% endfor %}
                 </div>
             </div>

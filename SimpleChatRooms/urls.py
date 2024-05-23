@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from messaging.views import *
 from django.conf import settings
 from django.conf.urls.static import static
@@ -31,5 +31,6 @@ urlpatterns += [
     path("logout/", logout_user),
    path("profile/", profile),
     path("start_chat/",get_start_Chat),
-    path("load_previous_messages/", load_previous_messages)
+    path("load_previous_messages/", load_previous_messages),
+    path('', include('django_prometheus.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)

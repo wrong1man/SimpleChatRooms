@@ -1,20 +1,20 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from celery import current_app
+from SimpleChatRooms.celery import app as celery_app
 from django.utils import timezone, dateparse
 import redis
 import traceback
-
 # Time in seconds between messages for throttling
 THROTTLE_SECONDS=2
 
 # Number of messages to keep in REDIS cache
 REDIS_MESSAGES_TO_KEEP = 100
+
 class UserChatConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Initialize Redis instance
-        self.redis_instance = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+        self.redis_instance = redis.StrictRedis(host='redis', port=6379, db=0)
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['conversation_id']
@@ -36,8 +36,8 @@ class UserChatConsumer(AsyncWebsocketConsumer):
             await self.accept()
 
             # Log user connection activity
-            current_app.send_task('messaging.tasks.log_activity',
-                                  (self.user.id, f"[WS] User connected to chat {self.room_name}", timestamp))
+            celery_app.send_task('messaging.tasks.log_activity',
+                                  args=(self.user.id, f"[WS] User connected to chat {self.room_name}", timestamp))
 
             # Send the last 100 messages to the user
             last_messages = self.redis_instance.lrange(self.room_name, 0, 99)
@@ -46,8 +46,7 @@ class UserChatConsumer(AsyncWebsocketConsumer):
 
         except Exception as e:
             # Log connection error
-            current_app.send_task('messaging.tasks.log_error',
-                                  (self.user.id, traceback.format_exc(), f"connect", timestamp))
+            celery_app.send_task('messaging.tasks.log_error',args=(self.user.id, traceback.format_exc(), f"connect", timestamp))
             raise e
 
     async def disconnect(self, close_code):
@@ -58,12 +57,12 @@ class UserChatConsumer(AsyncWebsocketConsumer):
                 self.channel_name
             )
             # Log successful disconnection
-            current_app.send_task('messaging.tasks.log_activity',
+            celery_app.send_task('messaging.tasks.log_activity',
                                   (self.user.id, f"[WS] User disconnected from chat {self.room_name}", timezone.now()))
 
         except Exception as e:
             # Log disconnection error
-            current_app.send_task('messaging.tasks.log_error',
+            celery_app.send_task('messaging.tasks.log_error',
                                   (self.user.id, traceback.format_exc(), f"disconnect", timezone.now()))
             raise e  # Re-raise the exception
 
@@ -101,7 +100,7 @@ class UserChatConsumer(AsyncWebsocketConsumer):
                 }
             )
             # Add the message to the conversation and log activit
-            current_app.send_task('messaging.tasks.add_message_to_conversation',(self.room_name,message,self.user.id,timestamp))#activity log performed within this task
+            celery_app.send_task('messaging.tasks.add_message_to_conversation',(self.room_name,message,self.user.id,timestamp))#activity log performed within this task
 
             # Push the message to Redis
             self.redis_instance.lpush(self.room_name, json.dumps({'message': message, 'sender': sender_id,'timestamp':timestamp.strftime('%Y-%m-%d %H:%M:%S')}))
@@ -111,7 +110,7 @@ class UserChatConsumer(AsyncWebsocketConsumer):
 
         except Exception as e:
             # Log error in message receipt
-            current_app.send_task('messaging.tasks.log_error', (self.user.id, traceback.format_exc(), f"receive", timezone.now()))
+            celery_app.send_task('messaging.tasks.log_error', (self.user.id, traceback.format_exc(), f"receive", timezone.now()))
             raise e  # Re-raise the exception
 
 
