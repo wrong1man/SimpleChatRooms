@@ -50,15 +50,17 @@ If you're using PostgreSQL, you can increase concurrency.
 
 ## Deployment & Docker 
   
-You can check out the live deployment of this project on an Azure VM at: [http://***](http://***)  
+You can check out the live deployment of this project on an Azure VM at: [https://sograpp.com](https://sograpp.com) (this was just a domain i had unused) 
 
 To deploy this with docker you must:
 1. Clone this git
 2. Run `docker-compose build`
 3. Run `docker-compose up`
-4. (optional) create a superuser run `sudo docker exec -it simplechatrooms-web-1 python manage.py createsuperuser` (assuming the container is named simplechatrooms-web-1; use `sudo docker image ls` to check)
+4. (optional) create a superuser run `sudo docker exec -it {container_id} python manage.py createsuperuser` (find the container id with the name ending in **web** via `docker ps`)
 
 The Server should live on port 8000 (edit yml file to change)
+
+Note: A few more steps are required to deploy the container on a server - such as setting up Nginx/apache, handling SSL...
 
 ## Frontend notes
   
