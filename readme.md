@@ -16,7 +16,7 @@ Users connect to WebSocket via `ws/userchat/{conversation_id}/`
 This endpoint is secured to ensure only participants of the `conversation`can access it.
 
 Message structure is simplistic:
-```json
+```javascript
 {  
     "message": "string",  // The message text.  
     "sender": "integer",  // The ID of the user who sent the message. Which is populated by the backend.
