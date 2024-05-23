@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+import SimpleChatRooms
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -125,7 +127,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATIC_ROOT = "static/"
+STATIC_ROOT = "collected_static/"
+# STATIC_ROOT = "var/www/SimpleChatRooms/static/"
 LOGIN_URL = "/login/"
 SESSION_COOKIE_SECURE=False
 
@@ -134,6 +137,8 @@ SESSION_COOKIE_SECURE=False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.db'
 
 CHANNEL_LAYERS = {
     'default': {

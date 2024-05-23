@@ -30,8 +30,8 @@
               <div class="col-sm-8">
                 <h3>Open chat</h3>
                   <div class="chatlist_container d-flex flex-wrap">
-                    {% for chat in my_chats %}
-                      <div class="single-chat">#{{ chat.id }} {{ chat.get_title }} <buttom class="btn btn-sm btn-secondary">o</buttom> </div>
+                    {% for chat in mychats %}
+                      <div class="single-chat badge bg-primary mx-1">#{{ chat.id }} {% for p in chat.get_title %}{% if p.id !=  request.user.id %}{{ p }}{% endif %}{% endfor %} <button class="btn btn-sm btn-secondary" onclick="open_chat('{{ chat.id }}')"><img src="/static/envo_open.svg" width="20" alt="openchat"> </button> </div>
                     {% endfor %}
                 </div>
             </div>
@@ -57,6 +57,9 @@ function validate_selection(){
 }
 function start_chat(){
     window.location="/start_chat/?target_user="+String($("#select_user").val())
+}
+function open_chat(cid){
+    window.location="/start_chat/?cid="+String(cid)
 }
 </script>
 </body>

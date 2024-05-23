@@ -19,6 +19,9 @@
 
 
               <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:80vh !important;">
+                  
+            <button id="load_previous" class="btn btn-primary">Load previous messages</button>  
+                  
               <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px;"><div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps-scrollbar-y-rail" style="top: 0px; height: 0px; right: 2px;"><div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 2px;"></div></div></div>
 
               <div class="publisher bt-1 border-light">
@@ -49,7 +52,33 @@
   window.conversationId = {{ conversation.id }};  
 </script>  
 <script src="/static/chat.js"></script>  
+<script>
+    function loadPreviousMessages() {  
+    // Convert the timestamp to the format your backend expects  
+    const timestampStr = earliestMessageTimestamp.toISOString();  
+  
+    // Make a GET request to your backend  
+    fetch(`/load_previous_messages/?timestamp=${timestampStr}&cid=${window.conversationId}`)  
+        .then(response => {  
+            if (!response.ok) {  
+                throw new Error(`HTTP error! status: ${response.status}`);  
+            }  
+            return response.json();  
+        })  
+        .then(data => {  
+            // Handle the response  
+            // Update `earliestMessageTimestamp` if necessary  
+            data.messages.forEach((message) => {  
+                update_chat(message, true);  // Pass true for the prepend parameter  
+            });  
+        })  
+        .catch(error => {  
+            console.error(`Error loading previous messages: ${error}`);  
+        });  
+}  
 
+
+</script>  
 
 </body>
 </html>

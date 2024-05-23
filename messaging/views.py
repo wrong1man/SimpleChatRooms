@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.utils import dateparse
 from .forms import *
-from .models import Conversation
+from .models import Conversation, Message
 from django.http import HttpResponse
 import json
 def index(request):
@@ -46,21 +47,22 @@ def logout_user(request):
 @login_required
 def profile(request):
     all_users=User.objects.all().exclude(id=request.user.id)
-    return render(request, "profile.html", {"all_users":all_users})
-def chat_page(request):
-    return render(request, "chat.html")
+    mychats=Conversation.objects.filter(participants=request.user)
+    return render(request, "profile.html", {"all_users":all_users, "mychats":mychats})
 @login_required
 def get_start_Chat(request):
     participant1=request.user
     participant2=request.GET.get("target_user")
-    chat_id=request.GET.get("chat_id")
+    chat_id=request.GET.get("cid")
     convo=Conversation.objects.filter(id=chat_id).first()
     if convo:
-        if participant1 in convo.participants.all() and participant2 in convo.participants.all():
+        #opening conversation from ID
+        if participant1 in convo.participants.all():
             pass
         else:
-            return HttpResponse(status=404, message="Conversation not found.")
+            return HttpResponse("Conversation not found.",status=404)
     elif Conversation.objects.filter(participants=participant1).filter(participants__id=participant2).exists():
+        #opening conversation from "start chat" - First finds existing conversations
         convo=Conversation.objects.filter(participants=participant1).filter(participants__id=participant2).first()
     else:
         convo=Conversation.objects.create()
@@ -70,3 +72,11 @@ def get_start_Chat(request):
     return render(request, "chat.html", {"conversation": convo})
 
 
+@login_required
+def load_previous_messages(request):
+    cid=request.GET.get("cid")
+    timestamp=dateparse.parse_datetime(request.GET.get("timestamp"))
+    msgs=Message.objects.filter(conversation_id=cid, conversation__participants=request.user)#, timestamp__lt=timestamp)
+    print(timestamp, cid)
+    print(msgs)
+    return

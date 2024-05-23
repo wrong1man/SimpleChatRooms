@@ -30,6 +30,6 @@ urlpatterns += [
    path("login/", login_user),
     path("logout/", logout_user),
    path("profile/", profile),
-    path("chat/", chat_page),
-    path("start_chat/",get_start_Chat)
+    path("start_chat/",get_start_Chat),
+    path("load_previous_messages/", load_previous_messages)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)

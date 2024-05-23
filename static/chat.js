@@ -33,22 +33,33 @@ function send_message() {
     const msg = $("#written_message").val();
     if (msg !== "") {
         socket.send(JSON.stringify({
-            'message': msg,
-            'sender': window.userId
+            'message': msg
         }));
-    }
+    };
+    $("#written_message").val('');
 }
 
+let earliestMessageTimestamp = new Date();
 function update_chat(data) {
     const sender = data.sender;
     const msg = data.message;
-    console.log(data);
+
     if (sender === window.userId) {
         add_message(msg)
     } else {
         add_response(msg)
     }
+
+    let messageTimestamp = new Date(data.timestamp);
+    console.log(messageTimestamp)
+    if (earliestMessageTimestamp === null || messageTimestamp.getTime() < earliestMessageTimestamp.getTime()) {
+        console.log("Passed if")
+        earliestMessageTimestamp = messageTimestamp;
+    }
+    console.log(earliestMessageTimestamp)
 }
+
+
 
 let socket;
 $(document).ready(() => {
@@ -61,4 +72,12 @@ $(document).ready(() => {
     socket.onerror = (error) => {
         console.error(`WebSocket error: ${error}`);
     }
-});
+
+    $("#written_message").keypress((e) => {
+        if (e.which === 13) {  // 13 is the keycode for the "Enter" key
+            e.preventDefault();
+            send_message();
+        }
+
+    });
+})
