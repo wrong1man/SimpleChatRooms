@@ -16,7 +16,8 @@ class Message(models.Model):
     conversation=models.ForeignKey(Conversation, related_name="messages", on_delete=models.CASCADE)
     content=models.TextField()
     timestamp=models.DateTimeField()
-
+    class Meta:
+        ordering = ['-timestamp',]
 log_types=(
     (1,"User authentication"), #login, register and logout
     (2,"Open conversation"), #open or creating conversations

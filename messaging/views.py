@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils import dateparse
+from django.core import serializers
+from django.http import JsonResponse
 from .forms import *
 from .models import Conversation, Message
 from django.http import HttpResponse
@@ -72,11 +74,11 @@ def get_start_Chat(request):
     return render(request, "chat.html", {"conversation": convo})
 
 
+
 @login_required
 def load_previous_messages(request):
     cid=request.GET.get("cid")
     timestamp=dateparse.parse_datetime(request.GET.get("timestamp"))
-    msgs=Message.objects.filter(conversation_id=cid, conversation__participants=request.user)#, timestamp__lt=timestamp)
-    print(timestamp, cid)
-    print(msgs)
-    return
+    msgs=Message.objects.filter(conversation_id=cid, conversation__participants=request.user, timestamp__lt=timestamp)
+    serialized_obj = serializers.serialize('json', msgs)
+    return JsonResponse(json.loads(serialized_obj), safe=False, content_type='application/json')
