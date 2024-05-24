@@ -70,7 +70,7 @@ def login_user(request):
             return redirect(next)
         else:
             Generic_Activity_Log.objects.create(user=None, type=1, content=f"Failed login attempt for user: {username}", timestamp=stamp)
-            return render(request, "login.html", {"invalid":1})
+            return render(request, "login.html", {"invalid":True})
 
 @login_required
 def logout_user(request):
