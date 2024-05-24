@@ -16,7 +16,11 @@
 
         <form enctype="multipart/form-data" method="post">
             {% csrf_token %}
-
+            {% if invalid %}
+              <div class="errordiv w-100 text-center">
+              Login credentials invalid
+              </div>
+            {% endif %}
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-user ti-user"></i></span>
