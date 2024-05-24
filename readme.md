@@ -43,7 +43,7 @@ To run the Celery task server, use the following command:
 ```bash  
 celery -A SimpleChatRooms worker -P threads --concurrency=1 --loglevel=info  
  ```
-Note: The Celery task server is not required for the project to run - however logging and fetching older messages wont work properly.
+Note: The Celery task server is not required for the project to run - however logging and fetching older messages wont work properly. And not running it might involve commenting the task triggers to keep functionality.
 
 If you're using PostgreSQL, you can increase concurrency.
 
@@ -56,7 +56,7 @@ To deploy this with docker you must:
 1. Clone this git
 2. Run `docker-compose build`
 3. Run `docker-compose up`
-4. (optional) create a superuser run `sudo docker exec -it {container_id} python manage.py createsuperuser` (find the container id with the name ending in **web** via `docker ps`)
+4. (optional) create a superuser run `sudo docker exec -it {container_id} python manage.py createsuperuser` (find the container id for the container with the name ending in **web** via `docker ps`)
 
 The Server should live on port 8000 (edit yml file to change)
 
