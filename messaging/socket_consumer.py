@@ -4,17 +4,19 @@ from SimpleChatRooms.celery import app as celery_app
 from django.utils import timezone, dateparse
 import redis
 import traceback
+from django.conf import settings
 # Time in seconds between messages for throttling
 THROTTLE_SECONDS=2
 
 # Number of messages to keep in REDIS cache
 REDIS_MESSAGES_TO_KEEP = 100
 
+REDIS_HOST=settings.REDIS_HOST
 class UserChatConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Initialize Redis instance
-        self.redis_instance = redis.StrictRedis(host='redis', port=6379, db=0)
+        self.redis_instance = redis.StrictRedis(host=REDIS_HOST, port=6379, db=0)
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['conversation_id']
