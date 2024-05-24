@@ -26,11 +26,11 @@ urlpatterns = [
 
 urlpatterns += [
    path("", index),
-   path("register/", register),
-   path("login/", login_user),
-    path("logout/", logout_user),
-   path("profile/", profile),
-    path("start_chat/",get_start_Chat),
+   path("register/", register, name="register"),
+   path("login/", login_user, name="login_user"),
+    path("logout/", logout_user, name="logout_user"),
+   path("profile/", profile , name="profile"),
+    path("start_chat/",get_start_Chat, name="start_chat"),
     path("load_previous_messages/", load_previous_messages),
     path('', include('django_prometheus.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)

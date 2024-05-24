@@ -74,3 +74,21 @@ Design references for the login, register, profile, and chat pages are as follow
   
 - Login/Register/Profile: [CodePen Link](https://codepen.io/scanfcode/pen/jGeezR)  
 - Chat: [BBBootstrap Link](https://bbbootstrap.com/snippets/simple-chat-application-57631463)  
+
+## Running the tests
+To run the test extra packages must be installed:
+`
+pytest
+daphne
+pytest-asyncio
+`
+These are necessary to test the Websockets.
+
+after installing these packages run:
+```bash
+python manage.py test messaging.tests.http_tests
+```
+and
+```bash
+pytest messaging/tests/websocket_tests.py
+```
