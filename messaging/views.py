@@ -28,6 +28,8 @@ def register(request):
             stamp=timezone.now()
             if user_form.is_valid():
                 user = user_form.save()
+                user.set_password(request.POST['password'])
+                user.save()
                 login(request,user)
 
                 Generic_Activity_Log.objects.create(user=user, type=1, content="User registered", timestamp=stamp)
